@@ -77,7 +77,7 @@ def register_callbacks(app):
         if data_json is None:
             return [[] for _ in range(8)]
 
-        df = pd.read_json(data_json, orient="split")
+        df = pd.read_json(io.StringIO(data_json), orient="split")
 
         models = sorted(df["model"].unique())
         regions = sorted(df["region"].unique())
@@ -119,7 +119,7 @@ def register_callbacks(app):
         if data_json is None:
             return []
 
-        df = pd.read_json(data_json, orient="split")
+        df = pd.read_json(io.StringIO(data_json), orient="split")
 
         if model_f and model_f != "ALL":
             df = df[df["model"] == model_f]
@@ -147,7 +147,7 @@ def register_callbacks(app):
         if timestamp is None or table_data is None or current_json is None:
             return no_update
 
-        current_df = pd.read_json(current_json, orient="split")
+        current_df = pd.read_json(io.StringIO(current_json), orient="split")
         edited_df = pd.DataFrame(table_data)
 
         # テーブルに表示されている行を更新
@@ -176,7 +176,7 @@ def register_callbacks(app):
     def update_financial_table(fin_data_json):
         if fin_data_json is None:
             return []
-        fin_df = pd.read_json(fin_data_json, orient="split")
+        fin_df = pd.read_json(io.StringIO(fin_data_json), orient="split")
         return fin_df.to_dict("records")
 
     @app.callback(
@@ -190,7 +190,7 @@ def register_callbacks(app):
         if timestamp is None or table_data is None or current_json is None:
             return no_update
 
-        current_df = pd.read_json(current_json, orient="split")
+        current_df = pd.read_json(io.StringIO(current_json), orient="split")
         edited_df = pd.DataFrame(table_data)
 
         for _, row in edited_df.iterrows():
@@ -214,7 +214,7 @@ def register_callbacks(app):
     def update_non_financial_table(non_fin_data_json):
         if non_fin_data_json is None:
             return []
-        non_fin_df = pd.read_json(non_fin_data_json, orient="split")
+        non_fin_df = pd.read_json(io.StringIO(non_fin_data_json), orient="split")
         return non_fin_df.to_dict("records")
 
     @app.callback(
@@ -228,7 +228,7 @@ def register_callbacks(app):
         if timestamp is None or table_data is None or current_json is None:
             return no_update
 
-        current_df = pd.read_json(current_json, orient="split")
+        current_df = pd.read_json(io.StringIO(current_json), orient="split")
         edited_df = pd.DataFrame(table_data)
 
         for _, row in edited_df.iterrows():
@@ -259,8 +259,8 @@ def register_callbacks(app):
         if factory_json is None or sim_json is None:
             return [], []
         
-        factory_df = pd.read_json(factory_json, orient="split")
-        sim_df = pd.read_json(sim_json, orient="split")
+        factory_df = pd.read_json(io.StringIO(factory_json), orient="split")
+        sim_df = pd.read_json(io.StringIO(sim_json), orient="split")
         
         # 1. 実績(Vol)を年度・工場別で集計
         vol_df = sim_df.groupby(["year", "plant"])["volume"].sum().reset_index()
@@ -363,10 +363,10 @@ def register_callbacks(app):
         if not n_clicks or not name or not plant or not regions:
             return no_update, no_update, no_update, no_update
 
-        df = pd.read_json(data_json, orient="split")
-        fin_df = pd.read_json(fin_data_json, orient="split")
-        non_fin_df = pd.read_json(non_fin_data_json, orient="split")
-        factory_df = pd.read_json(factory_json, orient="split") if factory_json else None
+        df = pd.read_json(io.StringIO(data_json), orient="split")
+        fin_df = pd.read_json(io.StringIO(fin_data_json), orient="split")
+        non_fin_df = pd.read_json(io.StringIO(non_fin_data_json), orient="split")
+        factory_df = pd.read_json(io.StringIO(factory_json), orient="split") if factory_json else None
 
         # 財務マスターにこのモデルがまだなければ追加する
         if name not in fin_df["model"].values:
@@ -453,10 +453,10 @@ def register_callbacks(app):
         if not n_clicks or not model_name:
             return no_update, no_update
 
-        df = pd.read_json(data_json, orient="split")
-        fin_df = pd.read_json(fin_data_json, orient="split")
-        non_fin_df = pd.read_json(non_fin_data_json, orient="split")
-        factory_df = pd.read_json(factory_json, orient="split") if factory_json else None
+        df = pd.read_json(io.StringIO(data_json), orient="split")
+        fin_df = pd.read_json(io.StringIO(fin_data_json), orient="split")
+        non_fin_df = pd.read_json(io.StringIO(non_fin_data_json), orient="split")
+        factory_df = pd.read_json(io.StringIO(factory_json), orient="split") if factory_json else None
 
         engine = SimulationEngine(df, financial_df=fin_df, 
                                   non_financial_df=non_fin_df,
@@ -488,8 +488,8 @@ def register_callbacks(app):
         if data_json is None:
             return {}
 
-        df = pd.read_json(data_json, orient="split")
-        factory_df = pd.read_json(factory_json, orient="split") if factory_json else None
+        df = pd.read_json(io.StringIO(data_json), orient="split")
+        factory_df = pd.read_json(io.StringIO(factory_json), orient="split") if factory_json else None
         engine = SimulationEngine(df, factory_df=factory_df)
         timeline = engine.get_timeline_data()
 
@@ -525,10 +525,10 @@ def register_callbacks(app):
         if data_json is None or fin_data_json is None or non_fin_data_json is None or factory_json is None or dev_json is None:
             return [], {}, {}, {}, {}, {}
 
-        df = pd.read_json(data_json, orient="split")
-        fin_df = pd.read_json(fin_data_json, orient="split")
-        non_fin_df = pd.read_json(non_fin_data_json, orient="split")
-        factory_df = pd.read_json(factory_json, orient="split")
+        df = pd.read_json(io.StringIO(data_json), orient="split")
+        fin_df = pd.read_json(io.StringIO(fin_data_json), orient="split")
+        non_fin_df = pd.read_json(io.StringIO(non_fin_data_json), orient="split")
+        factory_df = pd.read_json(io.StringIO(factory_json), orient="split")
         
         # 工場フィルターの適用
         if factory_f and factory_f != "ALL":
@@ -544,7 +544,7 @@ def register_callbacks(app):
         non_financial = engine.calc_non_financial()
         
         # 開発データの設定
-        dev_df = pd.read_json(dev_json, orient="split")
+        dev_df = pd.read_json(io.StringIO(dev_json), orient="split")
         engine.set_development_data(dev_df)
         rd_summary = engine.calc_development_effort()
 
@@ -587,7 +587,7 @@ def register_callbacks(app):
         if not n_clicks or not data_json:
             return no_update
             
-        df = pd.read_json(data_json, orient="split")
+        df = pd.read_json(io.StringIO(data_json), orient="split")
         # 並び順を整理
         df = df[["model", "region", "powertrain", "drive", "plant", "year", "volume"]]
         
@@ -656,8 +656,8 @@ def register_callbacks(app):
         if data_json is None or factory_json is None:
             return []
 
-        df = pd.read_json(data_json, orient="split")
-        factory_df = pd.read_json(factory_json, orient="split")
+        df = pd.read_json(io.StringIO(data_json), orient="split")
+        factory_df = pd.read_json(io.StringIO(factory_json), orient="split")
         engine = SimulationEngine(df, factory_df=factory_df)
         
         # 存在する工場リスト（ソート）
@@ -688,7 +688,7 @@ def register_callbacks(app):
     def update_development_table(dev_json):
         if dev_json is None:
             return []
-        df = pd.read_json(dev_json, orient="split")
+        df = pd.read_json(io.StringIO(dev_json), orient="split")
         return df.to_dict("records")
 
     @app.callback(
