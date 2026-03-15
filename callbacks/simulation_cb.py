@@ -75,7 +75,7 @@ def register_callbacks(app):
     )
     def update_filter_options(data_json):
         if data_json is None:
-            return [[] for _ in range(7)]
+            return [[] for _ in range(8)]
 
         df = pd.read_json(data_json, orient="split")
 
